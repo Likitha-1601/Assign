@@ -1,0 +1,203 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+struct Node {
+    int data;
+    struct Node *prev;
+    struct Node *next;
+};
+
+struct Node *head = NULL;
+
+struct Node* createNode(int value) {
+    struct Node *newNode = (struct Node*)malloc(sizeof(struct Node));
+
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+
+    newNode->data = value;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+
+    return newNode;
+}
+
+void insertitem(int value) {
+    struct Node *newNode = createNode(value);
+
+    if (head == NULL) {
+        head = newNode;
+        return;
+    }
+
+    struct Node *temp = head;
+    while (temp->next != NULL)
+        temp = temp->next;
+
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+void deleteItem(int value) {
+    struct Node *temp = head;
+
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    while (temp != NULL && temp->data != value)
+        temp = temp->next;
+
+    if (temp == NULL) {
+        printf("Item not found\n");
+        return;
+    }
+
+    if (temp == head) {
+        head = temp->next;
+        if (head != NULL)
+            head->prev = NULL;
+        free(temp);
+        return;
+    }
+
+    temp->prev->next = temp->next;
+    if (temp->next != NULL)
+        temp->next->prev = temp->prev;
+
+    free(temp);
+}
+
+void searchItem(int value) {
+    struct Node *temp = head;
+    int pos = 1;
+
+    while (temp != NULL) {
+        if (temp->data == value) {
+            printf("Item found at position %d\n", pos);
+            return;
+        }
+        temp = temp->next;
+        pos++;
+    }
+
+    printf("Item not found\n");
+}
+
+\\decending order 
+
+void sortList() {
+    if (head == NULL || head->next == NULL)
+        return;
+
+    struct Node *i, *j;
+    int temp;
+
+    for (i = head; i != NULL; i = i->next) {
+        for (j = i->next; j != NULL; j = j->next) {
+            if (i->data < j->data) {
+                temp = i->data;
+                i->data = j->data;
+                j->data = temp;
+            }
+        }
+    }
+}
+
+
+
+void display() {
+    struct Node *temp = head;
+
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+
+void deleteList() {
+    struct Node *temp = head;
+    struct Node *nextNode;
+
+    while (temp != NULL) {
+        nextNode = temp->next;
+        free(temp);
+        temp = nextNode;
+    }
+
+    head = NULL;
+    printf("Entire list deleted\n");
+}
+
+
+int main() {
+    int choice, value;
+
+    while (1) {
+        printf("\n--- DOUBLY LINKED LIST ---\n");
+        printf("1. insert item\n");
+        
+        printf("2. Delete an item\n");
+        printf("3. Search an item\n");
+        printf("4. Sort list\n");
+        printf("5. Display list\n");
+        printf("6. Delete entire list\n");
+        printf("7. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value: ");
+                scanf("%d", &value);
+                insertitem(value);
+                break;
+
+           
+
+            case 2:
+                printf("Enter value to delete: ");
+                scanf("%d", &value);
+                deleteItem(value);
+                break;
+
+            case 3:
+                printf("Enter value to search: ");
+                scanf("%d", &value);
+                searchItem(value);
+                break;
+
+            case 4:
+                sortList();
+                printf("List sorted\n");
+                break;
+
+            case 5:
+                display();
+                break;
+
+            case 6:
+                deleteList();
+                break;
+
+            case 7:
+                exit(0);
+
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+
+    return 0;
+}
